@@ -6,7 +6,9 @@ const dbConfig = config[env];
 
 let sequelize;
 
-if (dbConfig.use_env_variable) {
+if (dbConfig.url) {
+  sequelize = new Sequelize(dbConfig.url, dbConfig);
+} else if (dbConfig.use_env_variable) {
   sequelize = new Sequelize(process.env[dbConfig.use_env_variable], dbConfig);
 } else {
   sequelize = new Sequelize(
