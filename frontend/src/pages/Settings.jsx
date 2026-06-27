@@ -16,6 +16,7 @@ import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import Input from '../components/shared/Input';
 import LoadingSpinner from '../components/shared/LoadingSpinner';
+import ConfirmDialog from '../components/shared/ConfirmDialog';
 
 const CURRENCIES = [
   { group: 'Americas', options: [
@@ -63,6 +64,7 @@ const Settings = () => {
   const { user, updateUser, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const currencyRef = useRef(null);
 
@@ -229,30 +231,18 @@ const Settings = () => {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      '⚠️ Are you absolutely sure?  This action cannot be undone.  All your data will be permanently deleted.'
-    );
+  const handleDeleteAccount = () => {
+    setShowDeleteConfirm(true);
+  };
 
-    if (!confirmed) return;
-
-    const doubleConfirm = window.prompt(
-      'Type "DELETE" to confirm account deletion:'
-    );
-
-    if (doubleConfirm !== 'DELETE') {
-      alert('Account deletion cancelled.');
-      return;
-    }
-
+  const confirmDeleteAccount = async () => {
+    setShowDeleteConfirm(false);
     try {
       setLoading(true);
-      await authService. deleteAccount();
-      alert('Your account has been deleted.');
+      await authService.deleteAccount();
       logout();
     } catch (error) {
       console.error('Failed to delete account:', error);
-      alert('Failed to delete account. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -605,6 +595,16 @@ const Settings = () => {
           </Button>
         </Card>
       )}
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Account"
+        message="Are you absolutely sure? This action cannot be undone. All your data will be permanently deleted."
+        confirmText="Delete Account"
+        confirmVariant="danger"
+        onConfirm={confirmDeleteAccount}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 };

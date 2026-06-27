@@ -4,12 +4,14 @@ import { FiSend, FiUser, FiLoader, FiRefreshCw } from 'react-icons/fi';
 import { AiOutlineRobot } from 'react-icons/ai';
 import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
+import ConfirmDialog from '../components/shared/ConfirmDialog';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [context, setContext] = useState(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -79,14 +81,12 @@ const Chatbot = () => {
   };
 
   const handleClearChat = () => {
-    if (window.confirm('Clear chat history?')) {
-      const greeting = {
-        role: 'assistant',
-        content: "Chat cleared! How can I help you today?",
-        timestamp: new Date(),
-      };
-      setMessages([greeting]);
-    }
+    setShowClearConfirm(true);
+  };
+
+  const confirmClearChat = () => {
+    setShowClearConfirm(false);
+    setMessages([{ role: 'assistant', content: "Chat cleared! How can I help you today?", timestamp: new Date() }]);
   };
 
   const suggestions = chatbotService.getSuggestedQuestions(context);
@@ -181,6 +181,16 @@ const Chatbot = () => {
           </form>
         </div>
       </Card>
+
+      <ConfirmDialog
+        isOpen={showClearConfirm}
+        title="Clear Chat"
+        message="Are you sure you want to clear the chat history?"
+        confirmText="Clear"
+        confirmVariant="danger"
+        onConfirm={confirmClearChat}
+        onCancel={() => setShowClearConfirm(false)}
+      />
     </div>
   );
 };

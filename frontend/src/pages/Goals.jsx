@@ -16,6 +16,7 @@ import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import Input from '../components/shared/Input';
 import LoadingSpinner from '../components/shared/LoadingSpinner';
+import ConfirmDialog from '../components/shared/ConfirmDialog';
 
 const Goals = () => {
   const { formatCurrency } = useCurrency();
@@ -25,6 +26,7 @@ const Goals = () => {
   const [showContributionModal, setShowContributionModal] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [selectedGoal, setSelectedGoal] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -198,10 +200,13 @@ const Goals = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (! window.confirm('Are you sure you want to delete this goal?')) {
-      return;
-    }
+  const handleDelete = (id) => {
+    setConfirmDialog({ isOpen: true, id });
+  };
+
+  const confirmDelete = async () => {
+    const id = confirmDialog.id;
+    setConfirmDialog({ isOpen: false, id: null });
 
     try {
       await goalService.deleteGoal(id);
@@ -664,6 +669,15 @@ const Goals = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="Delete Goal"
+        message="Are you sure you want to delete this goal? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };

@@ -16,6 +16,7 @@ import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import Input from '../components/shared/Input';
 import LoadingSpinner from '../components/shared/LoadingSpinner';
+import ConfirmDialog from '../components/shared/ConfirmDialog';
 
 const Budgets = () => {
   const { formatCurrency } = useCurrency();
@@ -33,6 +34,7 @@ const Budgets = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
 
   useEffect(() => {
     fetchBudgets();
@@ -154,18 +156,19 @@ const Budgets = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this budget?')) {
-      return;
-    }
+  const handleDelete = (id) => {
+    setConfirmDialog({ isOpen: true, id });
+  };
 
+  const confirmDelete = async () => {
+    const id = confirmDialog.id;
+    setConfirmDialog({ isOpen: false, id: null });
     try {
       await budgetService.deleteBudget(id);
       fetchBudgets();
       fetchBudgetStatus();
     } catch (error) {
       console.error('Failed to delete budget:', error);
-      alert('Failed to delete budget');
     }
   };
 
@@ -520,6 +523,15 @@ const Budgets = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="Delete Budget"
+        message="Are you sure you want to delete this budget? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };

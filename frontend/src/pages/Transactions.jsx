@@ -18,11 +18,13 @@ import Card from '../components/shared/Card';
 import Button from '../components/shared/Button';
 import Input from '../components/shared/Input';
 import LoadingSpinner from '../components/shared/LoadingSpinner';
+import ConfirmDialog from '../components/shared/ConfirmDialog';
 
 const Transactions = () => {
   const { formatCurrency } = useCurrency();
   const [searchParams, setSearchParams] = useSearchParams();
   const [transactions, setTransactions] = useState([]);
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, id: null });
   const [allTransactions, setAllTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -211,10 +213,13 @@ const Transactions = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (! window.confirm('Are you sure you want to delete this transaction?')) {
-      return;
-    }
+  const handleDelete = (id) => {
+    setConfirmDialog({ isOpen: true, id });
+  };
+
+  const confirmDelete = async () => {
+    const id = confirmDialog.id;
+    setConfirmDialog({ isOpen: false, id: null });
 
     try {
       await transactionService.deleteTransaction(id);
@@ -633,6 +638,15 @@ const Transactions = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="Delete Transaction"
+        message="Are you sure you want to delete this transaction? This action cannot be undone."
+        confirmText="Delete"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, id: null })}
+      />
     </div>
   );
 };
