@@ -72,7 +72,7 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         {/* Logo/Header */}
         <div className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold gradient-text mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold gradient-text mb-2 pb-2">
             Savvy Budget
           </h1>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
