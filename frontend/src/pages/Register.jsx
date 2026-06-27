@@ -90,7 +90,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
       <div className="max-w-md w-full space-y-8">
         {/* Logo/Header */}
         <div className="text-center">
@@ -106,7 +106,7 @@ const Register = () => {
         </div>
 
         {/* Register Form */}
-        <div className="card p-8">
+        <div className="card p-5 sm:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
