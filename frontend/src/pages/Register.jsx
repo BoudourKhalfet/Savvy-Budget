@@ -17,6 +17,7 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +63,10 @@ const Register = () => {
       errors.confirmPassword = 'Passwords do not match';
     }
     
+    if (!agreedToTerms) {
+      errors.terms = 'You must agree to the Terms of Service to continue';
+    }
+
     return errors;
   };
 
@@ -162,28 +167,29 @@ const Register = () => {
               required
             />
 
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
+            <div>
+              <div className="flex items-start">
                 <input
                   id="terms"
                   name="terms"
                   type="checkbox"
-                  required
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  checked={agreedToTerms}
+                  onChange={(e) => {
+                    setAgreedToTerms(e.target.checked);
+                    if (formErrors.terms) setFormErrors((p) => ({ ...p, terms: '' }));
+                  }}
+                  className="h-4 w-4 mt-0.5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-              </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="terms" className="text-gray-700">
+                <label htmlFor="terms" className="ml-3 text-sm text-gray-700">
                   I agree to the{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Terms of Service
-                  </a>{' '}
+                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Terms of Service</a>{' '}
                   and{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                    Privacy Policy
-                  </a>
+                  <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Privacy Policy</a>
                 </label>
               </div>
+              {formErrors.terms && (
+                <p className="mt-1 text-sm text-red-600">{formErrors.terms}</p>
+              )}
             </div>
 
             <Button
