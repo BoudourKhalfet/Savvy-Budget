@@ -2,6 +2,12 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    const existing = await queryInterface.sequelize.query(
+      `SELECT COUNT(*) FROM categories WHERE user_id IS NULL`,
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    );
+    if (parseInt(existing[0].count) > 0) return;
+
     await queryInterface.bulkInsert('categories', [
       // Expense Categories
       {
